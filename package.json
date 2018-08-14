@@ -1,0 +1,25 @@
+{
+  "name": "ng-contact-manager",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "Sample2": "start:server",
+    "start:server": "node src/server/index.js",
+    "watch:server": "nodemon src/server/index.js",
+    "watch": "run-p watch:*",
+    "sample": "node src/server/data/seed-db.js"
+  },
+  "private": true,
+  "dependencies": {
+    "async": "^2.6.1",
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.17.2",
+    "core-js": "^2.4.1",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.3",
+    "express-jwt": "^5.3.0",
+    "jsonwebtoken": "^7.4.1",
+    "npm-run-all": "^4.0.2",
+    "pg": "^7.4.3"
+  }
+}

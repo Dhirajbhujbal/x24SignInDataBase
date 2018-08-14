@@ -1,0 +1,5 @@
+[
+  { "username": "Sachin Ranvirkar", "admin": true, "password": "Pt4bvZSSI4KN4g", "mobile":"8087737812", "otp":"", "expirydate":""},
+  { "username": "Kunal Dahale", "admin": false, "password": "ANz75xWo3n2J3Y", "mobile":"9657495408", "otp":"", "expirydate":""},
+  { "username": "Dhiraj", "admin": false, "password": "ANz753RGTn2J3Y", "mobile":"9975956792", "otp":"", "expirydate":""}
+]
