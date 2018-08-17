@@ -50,5 +50,5 @@ function seedCollection(tableName, columnString, columnValueStr, initialRecords)
 	});	
 }
 
-//seedCollection('USERS', "USERNAME, ADMIN, PASSWORD, MOBILE, OTP, EXPIRYDATE", "$1, $2, $3, $4, $5, $6", users);
-seedCollection('CONTACTS', "NAME, ADDRESS, PHONE, PHOTOURL", "$1, $2, $3, $4", contacts);
+seedCollection('USERS', "FIRSTNAME, LASTNAME, GENDER, DATEOFBIRTH, COUNTRY, PASSWORD, MOBILENUMBER, EMAIL", "$1, $2, $3, $4, $5, $6, $7, $8", users);
+//seedCollection('CONTACTS', "NAME, ADDRESS, PHONE, PHOTOURL", "$1, $2, $3, $4", contacts);
