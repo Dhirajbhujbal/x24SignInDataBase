@@ -23,8 +23,9 @@ function seedCollection(tableName, columnString, columnValueStr, initialRecords)
 			console.log("Pg connection err", err);
 		}else{
 			console.log('connected to pg...');	
+			var count = 0;
 			async.forEach(initialRecords, (obj, callback) => {
-				var queryStr = "INSERT INTO "+tableName+"("+columnString+") values("+columnValueStr+")";				
+				var queryStr = "INSERT INTO "+tableName+"("+columnString+") values("+columnValueStr+")";							
 				var valueArr = [];
 				for(key in obj){
 					obj[key] = (key.toLowerCase() === "password") ? bcrypt.hashSync(obj[key], 10) : obj[key];
@@ -36,6 +37,8 @@ function seedCollection(tableName, columnString, columnValueStr, initialRecords)
 						done();
 						callback(err);
 					} else {
+						count++;
+						console.log(count);
 						callback();
 					}
 				});
@@ -45,10 +48,10 @@ function seedCollection(tableName, columnString, columnValueStr, initialRecords)
 				}else{
 					console.error("All records are processed...");
 				}
-			}); 
+			});
 		}
 	});	
 }
 
-seedCollection('USERS', "FIRSTNAME, LASTNAME, GENDER, DATEOFBIRTH, COUNTRY, PASSWORD, MOBILENUMBER, EMAIL", "$1, $2, $3, $4, $5, $6, $7, $8", users);
+//seedCollection('USERS', "ID, FIRSTNAME, LASTNAME, GENDER, DATEOFBIRTH, COUNTRY, PASSWORD, MOBILENUMBER, EMAIL", "$1, $2, $3, $4, $5, $6, $7, $8, $9", users);
 //seedCollection('CONTACTS', "NAME, ADDRESS, PHONE, PHOTOURL", "$1, $2, $3, $4", contacts);

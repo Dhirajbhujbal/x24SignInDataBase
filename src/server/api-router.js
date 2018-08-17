@@ -16,12 +16,12 @@ function apiRouter(pool) {
 		}
 	});
 
-	router.get('/contacts', (req, res) => {
+	router.get('/users', (req, res) => {
 		pool.connect((err, client, done) => {
 			if (err) {
 				return res.status(500).json({ error: err.stack });
 			}
-			var queryStr = "SELECT * FROM CONTACTS";
+			var queryStr = "SELECT * FROM USERS";
 			client.query(queryStr, function(err, result) {
 				done();			
 				if(err){
@@ -35,17 +35,17 @@ function apiRouter(pool) {
 			});		
 		});
 	});
-
-	router.post('/contacts', (req, res) => {
-		const contact = req.body;
+	
+	router.post('/users', (req, res) => {
+		const user = req.body;
 	
 		pool.connect((err, client, done) => {
 			if (err) {
 				return res.status(500).json({ error: err.stack });
 			}
-			var queryStr = "INSERT INTO CONTACTS(NAME, ADDRESS, PHONE, PHOTOURL) VALUES($1, $2, $3, $4)";
+			var queryStr = "INSERT INTO USERS(FIRSTNAME, LASTNAME, GENDER, DATEOFBIRTH, COUNTRY, PASSWORD, MOBILENUMBER, EMAIL) VALUES($1, $2, $3, $4, $5, $6, $7, $8)";
 			
-			client.query(queryStr, [contact.name, contact.address, contact.phone, contact.photourl], function(err, result) {
+			client.query(queryStr, [user.firstName, user.lastName, user.gender, user.dateOfBirth, user.country, user.password, user.mobileNumber, user.emial], function(err, result) {
 				if (err) {
 					done();
 					return res.status(500).json({ error: 'Error in a inserting new record.' });
@@ -64,7 +64,7 @@ function apiRouter(pool) {
 			if (err) {
 				return res.status(500).json({ error: err.stack });
 			}	
-			var queryStr = "SELECT * FROM USERS WHERE USERNAME = $1 limit 1";
+			var queryStr = "SELECT * FROM USERS WHERE EMAIL = $1 limit 1";
 			client.query(queryStr, [user.username], function(err, result) {
 				done();			
 				if(err){
@@ -82,18 +82,18 @@ function apiRouter(pool) {
 						}
 
 						const payload = {
-							username: data.username,
-							admin: data.admin
+							email: data.email,
+							gender: data.gender
 						};
 
-						const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1m' });
+						const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
 						return res.json({
 							message: 'successfuly authenticated',
 							token: token
 						});
 					}else{
-						return res.status(401).json({ error: 'We didnt found this username in our database.'});
+						return res.status(401).json({ error: 'We didnt found this user in our database.'});
 					}				
 				}
 			});
