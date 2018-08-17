@@ -1,17 +1,11 @@
 # Angular + Node Contact Manager
 
-## Exercise files for Lynda.com course: Angular API Communication and Authentication
+## Angular API Communication and Authentication
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.2.
 
-## Using the files
-
-Exercise files for each video can be found in the `exercise-files` folder, which contains the code files at the start state and end state for each video. If at any point you wish to jump in to a specific video's exercise files, be sure to run `npm install` to install your dependencies. Please note that not every video will have exercise files.
-
-I recommend you start with the `start-here` folder (go ahead and rename it), and make changes in that directory as you work through each video. The completed app is in `completed-app`.
-
-**Note**
-Always make sure you make a copy of `.env.sample`, rename it to `.env`, and add in the necessary environemtn variables for both the JWT secret and the MongoDB connection string.
+##Note
+Always make sure you make a copy of `.env.sample`, rename it to `.env`, and add in the necessary environemtn variables for both the JWT secret and the postgreSql connection string.
 
 ## Build tasks
 
@@ -25,5 +19,5 @@ Different `npm` scripts for your workflow:
   * Angluar CLI v1.0.2
   * Node v6.10.0
   * Express v4.x
-  * MongoDB
+  * postgreSql
   * JSON Web Tokens
