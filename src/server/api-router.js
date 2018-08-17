@@ -5,6 +5,14 @@ const checkJwt = require('express-jwt');
 
 function apiRouter(pool) {
 	const router = express.Router();
+	
+	var allowCrossDomain = function(req, res, next) {
+		res.setHeader('access-control-allow-origin', '*');
+		res.setHeader('access-control-allow-methods', '*');
+		return next();		
+	};
+	
+	router.use(allowCrossDomain);
 
 	router.use(
 		checkJwt({ secret: process.env.JWT_SECRET }).unless({ path: '/api/authenticate'})
