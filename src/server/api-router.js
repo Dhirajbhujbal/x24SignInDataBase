@@ -9,6 +9,7 @@ function apiRouter(pool) {
 	var allowCrossDomain = function(req, res, next) {
 		res.setHeader('access-control-allow-origin', '*');
 		res.setHeader('access-control-allow-methods', '*');
+		res.setHeader('access-control-allow-headers', '*');
 		return next();		
 	};
 	
