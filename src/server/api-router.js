@@ -65,7 +65,7 @@ function apiRouter(pool) {
 				return res.status(500).json({ error: err.stack });
 			}	
 			var queryStr = "SELECT * FROM USERS WHERE EMAIL = $1 limit 1";
-			client.query(queryStr, [user.username], function(err, result) {
+			client.query(queryStr, [user.email], function(err, result) {
 				done();			
 				if(err){
 					return res.json({
