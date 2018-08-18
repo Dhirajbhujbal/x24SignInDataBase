@@ -13,6 +13,8 @@ const pool = new Pool({
 	ssl: true
 });
 
-createExpressApp(pool).listen(port, () => {
+const twilio_client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_TOKEN);
+
+createExpressApp(pool, twilio_client).listen(port, () => {
 	console.log('listening on port '+port+'...');
 });

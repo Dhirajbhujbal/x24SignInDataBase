@@ -2,8 +2,9 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const checkJwt = require('express-jwt');
+const utility = require('./utility');
 
-function apiRouter(pool) {
+function apiRouter(pool, twilio_client) {
 	const router = express.Router();
 	
 	var allowCrossDomain = function(req, res, next) {
@@ -16,12 +17,12 @@ function apiRouter(pool) {
 	router.use(allowCrossDomain);
 
 	router.use(
-		checkJwt({ secret: process.env.JWT_SECRET }).unless({ path: '/api/authenticate'})
+		checkJwt({ secret: process.env.JWT_SECRET }).unless({ path: ['/api/authenticate','/api/usersignup','/api/verify']})
 	); 
 
 	router.use((err, req, res, next) => {
 		if (err.name === 'UnauthorizedError') {
-		res.status(401).send({ error: err.message });
+			res.status(401).send({ error: err.message });
 		}
 	});
 
@@ -45,25 +46,87 @@ function apiRouter(pool) {
 		});
 	});
 	
-	router.post('/users', (req, res) => {
+	router.post('/usersignup', (req, res) => {
 		const user = req.body;
+
+		var otp = utility.getRandomNumber();
+
+		console.log("/usersignup route called..");
 	
 		pool.connect((err, client, done) => {
 			if (err) {
 				return res.status(500).json({ error: err.stack });
 			}
-			var queryStr = "INSERT INTO USERS(FIRSTNAME, LASTNAME, GENDER, DATEOFBIRTH, COUNTRY, PASSWORD, MOBILENUMBER, EMAIL) VALUES($1, $2, $3, $4, $5, $6, $7, $8)";
+			var queryStr = "INSERT INTO USERS(FIRSTNAME, LASTNAME, GENDER, DATEOFBIRTH, COUNTRY, PASSWORD, MOBILENUMBER, EMAIL, OTP, CREATIONDATE) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)";
 			
-			client.query(queryStr, [user.firstName, user.lastName, user.gender, user.dateOfBirth, user.country, user.password, user.mobileNumber, user.emial], function(err, result) {
+			console.log("connected to pool..");
+
+			client.query(queryStr, [user.firstName, user.lastName, user.gender, user.dateOfBirth, user.country, user.password, user.mobileNumber, user.emial, otp, new Date()], function(err, result) {
 				if (err) {
 					done();
-					return res.status(500).json({ error: 'Error in a inserting new record.' });
+					return res.status(500).json({ error: 'Error in a inserting new record.', err: err});
 				}
-				
-				return res.status(201).json({success:true});		
+
+				console.log("records inserted into user table..");
+
+				twilio_client.messages.create({
+					body: otp+' is your OTP(One Time Password) for creating account on application.',
+					to: '+91'+user.mobileNumber,  // Text this number
+					from: process.env.TWILIO_NUMBER // From a valid Twilio number
+				})
+				.then((message) => {
+					return res.status(201).json({success:"OTP is sent to your mobile.", message: message});		
+				}).catch((e) => {
+					return res.status(500).json({error:e});
+				});			
 			});
 		});	
-	
+		
+	});
+
+	router.post('/verify', (req, res) => {
+		const user = req.body;
+		console.log("/verify route called...", user);
+		pool.connect((err, client, done) => {
+			if (err) {
+				return res.status(500).json({ error: err.stack });
+			}	
+			var queryStr = "SELECT * FROM USERS WHERE EMAIL = $1 AND OTP = $2";
+			client.query(queryStr, [user.email, user.otp], function(err, result) {		
+				if(err){
+					done();
+					return res.json({
+						error: true,
+						errorObj:err
+					});	
+				}else{			
+					if(result.rowCount){
+						var data = result.rows[0];
+						console.log(data);
+						var isOtpExpired = utility.isOtpExpired(data.creationdate);
+						if(isOtpExpired){
+							done();
+							return res.status(401).json({ error: "OTP expired." });
+						}
+						var updateQuery = "UPDATE USERS SET VERIFY = $1 WHERE EMAIL = $2 AND OTP = $3";
+						client.query(updateQuery, [true, data.email, data.otp], function(err, updateQueryResult){
+							done();
+							if(err){
+								return res.json({
+									error: true,
+									errorObj:err
+								});
+							}else{
+								return res.status(200).json({ success: "User verified successfully." });
+							}
+						});
+					}else{
+						done();
+						return res.status(401).json({ error: "Not a valid user." });						
+					}
+				}
+			});
+		});
 	});
 
 	router.post('/authenticate', (req, res) => {

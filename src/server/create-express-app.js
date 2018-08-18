@@ -3,13 +3,13 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const apiRouter = require('./api-router');
 
-function createExpressApp(pool) {
+function createExpressApp(pool, twilio_client) {
   const app = express();
 
   app.use(express.static(path.join(__dirname, 'public')));
   app.use('/profiles', express.static(path.join(__dirname, 'profiles')));
   app.use(bodyParser.json());
-  app.use('/api', apiRouter(pool));
+  app.use('/api', apiRouter(pool, twilio_client));
   /* app.use('*', (req, res) => {
     return res.sendFile(path.join(__dirname, 'public/index.html'))
   }); */
