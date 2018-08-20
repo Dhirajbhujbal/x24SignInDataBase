@@ -48,6 +48,11 @@ function apiRouter(pool, twilio_client) {
 	
 	router.post('/usersignup', (req, res) => {
 		const user = req.body;
+		
+		// encript password before store it into database.
+		if(user.password){
+			user.password = bcrypt.hashSync(user.password, 10);
+		}
 
 		var otp = utility.getRandomNumber();
 
