@@ -66,7 +66,7 @@ function apiRouter(pool, twilio_client) {
 			
 			console.log("connected to pool..");
 
-			client.query(queryStr, [user.firstName, user.lastName, user.gender, user.dateOfBirth, user.country, user.password, user.mobileNumber, user.emial, otp, new Date()], function(err, result) {
+			client.query(queryStr, [user.firstName, user.lastName, user.gender, user.dateOfBirth, user.country, user.password, user.mobileNumber, user.email, otp, new Date()], function(err, result) {
 				if (err) {
 					done();
 					return res.status(500).json({ error: 'Error in a inserting new record.', err: err});
